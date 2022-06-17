@@ -1,51 +1,57 @@
-﻿using System;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 public class Program
 {
-    public static void Main()
+    static void Main(string[] args)
     {
-        // Hint: change `DESKTOP-123ABC\SQLEXPRESS` to your server name
-        //       alternatively use `localhost` or `localhost\SQLEXPRESS`
+        var task = PerformDatabaseOperations();
 
+        Console.WriteLine("Quote of the day");
+        Console.WriteLine(" Don't worry about the world coming to an end today... ");
+        Console.WriteLine(" It's already tomorrow in Australia.");
+
+        task.Wait();
+
+        Console.WriteLine();
+        Console.WriteLine("Press any key to exit...");
+        Console.ReadKey();
+    }
+
+    public static async Task PerformDatabaseOperations()
+    {
         string connectionString = @"Data Source=localhost\SQLEXPRESS;Initial Catalog=blogdb;Integrated Security=True";
 
-        using (BloggingContext db = new BloggingContext(connectionString))
+        using (var db = new BloggingContext(connectionString))
         {
-            Console.WriteLine($"Database ConnectionString: {db.ConnectionString}.");
-
-            // Create
-            Console.WriteLine("Inserting a new user");
-
-            db.Add(new User { 
+            // Create a new user and save it
+            db.User.Add(new User
+            {
                 FirstName = "Piotr",
                 LastName = "Japol",
                 Age = 22,
                 City = "Nowy Targ",
                 Etnicity = "Caucasian",
-                Gender = "Male",
+                Gender = "Male"
             });
-            db.SaveChanges();
+            Console.WriteLine("Calling SaveChanges.");
+            await db.SaveChangesAsync();
+            Console.WriteLine("SaveChanges completed.");
 
-            // Read
-            Console.WriteLine("Querying for a user");
+            // Query for all users ordered by first name
+            Console.WriteLine("Executing query.");
+            var users = await (from b in db.User
+                               orderby b.FirstName
+                               select b).ToListAsync();
 
-            User user = db.User
-                .OrderBy(b => b.Id)
-                .First();
-
-            // Update
-            Console.WriteLine("Updating the user and adding a role");
-
-            user.FirstName = "Karol";
-            user.Roles.Add(new Roles { JobName = "Network Admin" });
-            db.SaveChanges();
-
-            // Delete
-            Console.WriteLine("Delete the user");
-
-            db.Remove(user);
-            db.SaveChanges();
+            // Write all users out to Console
+            Console.WriteLine("Query completed with following results:");
+            foreach (var user in users)
+            {
+                Console.WriteLine(" - " + user.FirstName);
+            }
         }
     }
 }
