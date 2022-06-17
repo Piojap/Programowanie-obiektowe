@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
 public class BloggingContext : DbContext
@@ -29,7 +29,7 @@ public class User
     public string City { get; set; }
     public string Etnicity { get; set; }
     public string Gender { get; set; }
-    public List<Roles> Roles { get; } = new();
+    public virtual List<Roles> Roles { get; } = new();
 }
 
 public class Roles
@@ -38,7 +38,7 @@ public class Roles
     public string JobName { get; set; }
     public long UserId { get; set; }
     public User User { get; set; }
-    public List<Tasks> Tasks { get; } = new();
+    public virtual List<Tasks> Tasks { get; } = new();
 }
 
 public class Tasks
