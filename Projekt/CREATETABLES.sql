@@ -52,24 +52,3 @@ CREATE TABLE icon (
 );
 
 GO
-
-CREATE TABLE achi (
-	id BIGINT IDENTITY (1,1) PRIMARY KEY NOT NULL,
-	title NVARCHAR(100) NOT NULL
-);
-
-GO
-
-CREATE TABLE gameplayer (
-	gameid BIGINT NOT NULL,
-	playerid BIGINT NOT NULL
-);
-
-GO
-
-CREATE TABLE statachi (
-	statid BIGINT NOT NULL,
-	achiid BIGINT NOT NULL
-);
-
-GO
